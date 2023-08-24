@@ -10,7 +10,7 @@ from typing import *
 from .czlib import KEY_SIZE
 from .czlib_file import Codec
 
-ENCRYPTED_EXT = "7z.enc"
+ENCRYPTED_EXT = "gz.enc"
 
 
 def delete_if_ok(encrypted_path: str):
