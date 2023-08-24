@@ -89,8 +89,6 @@ pip install --upgrade czlib
 You don't need to know the specification. For some folks who want to know exactly what happened with their files, here
 is the specification for `key_file` and `.gz.enc` files:
 
-- if `key_file` does not exist, `czlib` will create a random key of 32 bytes using `os.urandom` encoded into `hex`
-
 - three algorithms are used in `czlib`: `SHA1`, `AES-256`, `DEFLATE`
 
 - encrypted files are updated only if file is modified (mtime changes)
@@ -119,8 +117,6 @@ ________________________________________________________________________________
 
 You don't need to know the specification. For some folks who want to know exactly what happened with their files, here
 is the specification for `key_file` and `.enc1` files:
-
-- if `key_file` does not exist, `czlib` will create a random key of 32 bytes using `os.urandom` encoded into `hex`
 
 - two algorithms are used in `czlib`: `SHA1` and `AES-256` in `CBC` mode
 
