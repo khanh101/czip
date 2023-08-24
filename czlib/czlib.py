@@ -82,7 +82,7 @@ def read_decrypt_decompress_write(
     def read_decrypt_decompress() -> tuple[bytes, bool]:
         encrypted_chunk = encrypted_read_io.read(CHUNK_SIZE)
         if len(encrypted_chunk) == 0:
-            return b"", True
+            return z.flush(), True
         chunk = c.decrypt(encrypted_chunk)
         b = z.decompress(chunk)
         return b, False
@@ -91,8 +91,6 @@ def read_decrypt_decompress_write(
     remaining_size = file_size
     while not eof and remaining_size > 0:
         b, eof = read_decrypt_decompress()
-        if eof:
-            b += z.flush()
 
         if remaining_size < len(b):
             b = b[:remaining_size]
