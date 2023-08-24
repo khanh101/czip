@@ -91,7 +91,7 @@ is the specification for `key_file` and `.enc1` files:
 
 - if `key_file` does not exist, `czlib` will create a random key of 32 bytes using `os.urandom` encoded into `hex`
 
-- two algorithms are used in `czlib`: `SHA1` and `AES-256` in `CBC` mode
+- three algorithms are used in `czlib`: `SHA1`, `AES-256`, `DEFLATE`
 
 - encrypted files are updated only if file is modified (mtime changes)
 
