@@ -1,10 +1,13 @@
 import io
 import os
+import zlib
 from dataclasses import dataclass
 from typing import BinaryIO
 
 from Cryptodome.Cipher import AES
 from Cryptodome.Hash import SHA1
+
+from .serialize import uint64_to_bytes, UINT64_SIZE, bytes_to_uint64
 
 HASH_SIZE = 20  # size of hash value in bytes
 BLOCK_SIZE = AES.block_size  # size of AES block in bytes
@@ -12,6 +15,7 @@ KEY_SIZE = 32  # size of AES key in bytes
 AES_MODE = AES.MODE_CBC  # cipher block chaining
 CHUNK_SIZE = 2 ** 30  # 1 GB # chunk size to read from io in bytes
 SALT_SIZE = 32  # size of salt
+COMPRESSION_LEVEL = 9
 
 assert BLOCK_SIZE == 16
 assert CHUNK_SIZE % BLOCK_SIZE == 0
@@ -36,16 +40,27 @@ def aes256_encrypt(
     assert len(key) == KEY_SIZE
 
     aes = AES.new(key, AES_MODE, init_vec)
+
     while True:
+        # read
         chunk = plain_read_io.read(CHUNK_SIZE)
         if len(chunk) == 0:
             return
-        if len(chunk) % BLOCK_SIZE != 0:
-            chunk += b"\0" * (BLOCK_SIZE - len(chunk) % BLOCK_SIZE)  # pad 0s until multiples of BLOCK_SIZE
+        # compress
+        compressed_chunk = zlib.compress(chunk, level=COMPRESSION_LEVEL)
 
-        b = aes.encrypt(chunk)
+        # encrypt
+        if len(compressed_chunk) % BLOCK_SIZE != 0:
+            # pad 0s until multiples of BLOCK_SIZE
+            padded_compressed_chunk = compressed_chunk + b"\0" * (BLOCK_SIZE - len(compressed_chunk) % BLOCK_SIZE)
+        else:
+            padded_compressed_chunk = compressed_chunk
 
-        encrypted_write_io.write(b)
+        encrypted_chunk = aes.encrypt(padded_compressed_chunk)
+
+        # write
+        encrypted_write_io.write(
+            uint64_to_bytes(len(compressed_chunk)) + uint64_to_bytes(len(encrypted_chunk)) + encrypted_chunk)
 
 
 def aes256_decrypt(
@@ -55,18 +70,30 @@ def aes256_decrypt(
     assert len(init_vec) == BLOCK_SIZE
     assert len(key) == KEY_SIZE
 
+    def read_exact(n: int) -> bytes:
+        b = encrypted_read_io.read(n)
+        assert len(b) == n, "corrupted_file"
+        return b
+
     aes = AES.new(key, AES_MODE, init_vec)
     remaining_size = file_size
     while remaining_size > 0:
-        chunk = encrypted_read_io.read(CHUNK_SIZE)
+        # read
+        len_compressed_chunk = bytes_to_uint64(read_exact(UINT64_SIZE))
+        len_encrypted_chunk = bytes_to_uint64(read_exact(UINT64_SIZE))
+        encrypted_chunk = read_exact(len_encrypted_chunk)
 
-        b = aes.decrypt(chunk)
+        # decrypt
+        padded_compressed_chunk = aes.decrypt(encrypted_chunk)
+        compressed_chunk = padded_compressed_chunk[:len_compressed_chunk]
+        # extract
+        chunk = zlib.decompress(compressed_chunk)
 
-        if remaining_size < len(b):
-            b = b[:remaining_size]
-        remaining_size -= len(b)
+        if remaining_size < len(chunk):
+            chunk = chunk[:remaining_size]
+        remaining_size -= len(chunk)
 
-        decrypted_write_io.write(b)
+        decrypted_write_io.write(chunk)
 
 
 def make_key_from_passphrase(passphrase: bytes) -> bytes:

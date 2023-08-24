@@ -7,10 +7,10 @@ import shutil
 import sys
 from typing import *
 
-from .crypt import KEY_SIZE
-from .crypt_file import Codec
+from .czip import KEY_SIZE
+from .czip_file import Codec
 
-ENCRYPTED_EXT = "enc1"
+ENCRYPTED_EXT = "7z.enc"
 
 
 def delete_if_ok(encrypted_path: str):

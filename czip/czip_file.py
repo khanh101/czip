@@ -7,7 +7,7 @@ import sys
 from dataclasses import dataclass
 from typing import BinaryIO
 
-from .crypt import aes256_encrypt, aes256_decrypt, sha1_hash, BLOCK_SIZE, KEY_SIZE
+from .czip import aes256_encrypt, aes256_decrypt, sha1_hash, BLOCK_SIZE, KEY_SIZE
 from .serialize import uint64_to_bytes, bytes_to_uint64, UINT64_SIZE
 from .signature import get_file_sig, FILE_SIG_SIZE, get_key_sig, KEY_SIG_SIZE, set_file_signature
 
@@ -40,7 +40,7 @@ def write_header(write_io: BinaryIO, header: Header):
     write_io.write(header.init_vec)
 
 
-def aes256_encrypt_file_if_needed(
+def encrypt_file_if_needed(
         key: bytes, plain_path: str, encrypted_path: str,
         key_sig: bytes | None = None,
 ) -> bool:
@@ -77,7 +77,7 @@ def aes256_encrypt_file_if_needed(
     return True
 
 
-def aes256_decrypt_file(
+def decrypt_file(
         key: bytes, encrypted_path: str, decrypted_path: str,
         key_sig: bytes | None = None,
 ):
@@ -109,7 +109,7 @@ class Codec:
         self.sig = sha1_hash(io.BytesIO(self.key))
 
     def encrypt_file_if_needed(self, plain_path: str, encrypted_path: str) -> bool:
-        return aes256_encrypt_file_if_needed(
+        return encrypt_file_if_needed(
             key=self.key,
             plain_path=plain_path,
             encrypted_path=encrypted_path,
@@ -117,7 +117,7 @@ class Codec:
         )
 
     def decrypt_file(self, encrypted_path: str, decrypted_path: str):
-        aes256_decrypt_file(
+        decrypt_file(
             key=self.key,
             encrypted_path=encrypted_path,
             decrypted_path=decrypted_path,
