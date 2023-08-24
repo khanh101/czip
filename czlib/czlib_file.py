@@ -7,7 +7,7 @@ import sys
 from dataclasses import dataclass
 from typing import BinaryIO
 
-from .czlib import aes256_encrypt, aes256_decrypt, sha1_hash, BLOCK_SIZE, KEY_SIZE
+from .czlib import read_compress_encrypt_write, read_decrypt_decompress_write, sha1_hash, BLOCK_SIZE, KEY_SIZE
 from .serialize import uint64_to_bytes, bytes_to_uint64, UINT64_SIZE
 from .signature import get_file_sig, FILE_SIG_SIZE, get_key_sig, KEY_SIG_SIZE, set_file_signature
 
@@ -70,7 +70,7 @@ def encrypt_file_if_needed(
             file_size=file_size,
             init_vec=init_vec,
         ))
-        aes256_encrypt(
+        read_compress_encrypt_write(
             key=key, init_vec=init_vec,
             plain_read_io=plain_f, encrypted_write_io=encrypted_f,
         )
@@ -87,7 +87,7 @@ def decrypt_file(
         header = read_header(encrypted_f)
         if header.key_sig != key_sig:
             raise RuntimeError(f"signature does not match for {encrypted_path}")
-        aes256_decrypt(
+        read_decrypt_decompress_write(
             key=key, init_vec=header.init_vec, file_size=header.file_size,
             encrypted_read_io=encrypted_f, decrypted_write_io=decrypted_f,
         )

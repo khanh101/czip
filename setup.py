@@ -5,7 +5,7 @@ if __name__ == "__main__":
         long_description = f.read()
     setuptools.setup(
         name="czlib",
-        version="2.0.4",
+        version="2.1.0",
         author="Nguyen Ngoc Khanh",
         author_email="khanh.nguyen.contact@gmail.com",
         long_description=long_description,
