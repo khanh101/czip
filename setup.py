@@ -4,7 +4,7 @@ if __name__ == "__main__":
     with open("README.md") as f:
         long_description = f.read()
     setuptools.setup(
-        name="czip",
+        name="czlib",
         version="2.0.1",
         author="Nguyen Ngoc Khanh",
         author_email="khanh.nguyen.contact@gmail.com",

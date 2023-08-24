@@ -11,22 +11,22 @@
 
 ```python
 # User maintains two directories plain_dir and encrypted_dir
-import czip
+import czlib
 
 plain_dir = "plain"
 encrypted_dir = "encrypted"
 restored_dir = "restored"
 
-key = czip.make_key_from_passphrase(b"passphrase1234")
+key = czlib.make_key_from_passphrase(b"passphrase1234")
 
 # Delete all files, directories in encrypted_dir that don't exist in the plain_dir
-czip.clean_encrypted_dir(
+czlib.clean_encrypted_dir(
     plain_dir=plain_dir,
     encrypted_dir=encrypted_dir,
 )
 
 # read files in plain_dir, encrypt and write files into encrypted_dir if needed using 12 workers
-czip.update_encrypted_dir(
+czlib.update_encrypted_dir(
     key=key,
     plain_dir=plain_dir,
     encrypted_dir=encrypted_dir,
@@ -37,16 +37,16 @@ czip.update_encrypted_dir(
 - restore
 
 ```python
-import czip
+import czlib
 
 plain_dir = "plain"
 encrypted_dir = "encrypted"
 restored_dir = "restored"
 
-key = czip.make_key_from_passphrase(b"passphrase1234")
+key = czlib.make_key_from_passphrase(b"passphrase1234")
 
 # restore all files in encrypted_dir using 12 workers
-czip.restore_encrypted_dir(
+czlib.restore_encrypted_dir(
     key=key,
     encrypted_dir=encrypted_dir,
     restored_dir=restored_dir,
@@ -57,20 +57,20 @@ czip.restore_encrypted_dir(
 - certificate
 
 ```python
-import czip
+import czlib
 
 correct_passphrase = b"passphrase123"
 
-cert = czip.make_certificate(correct_passphrase)
+cert = czlib.make_certificate(correct_passphrase)
 print("cert", cert)
 
 try:
     wrong_passphrase = b"passphrase456"
-    _ = czip.verify_certificate(cert, wrong_passphrase)
+    _ = czlib.verify_certificate(cert, wrong_passphrase)
 except AssertionError as e:
     print("expected assertion error: ", e)
 
-key = czip.verify_certificate(cert, correct_passphrase)
+key = czlib.verify_certificate(cert, correct_passphrase)
 
 print("generated key from correct passphrase", key)
 
@@ -145,7 +145,7 @@ is the specification for `key_file` and `.enc` files:
 # UPLOAD
 
 ```shell
-rm -rf dist czip.egg-info
+rm -rf dist czlib.egg-info
 python setup.py sdist
 twine upload dist/*
 ```
