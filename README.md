@@ -105,7 +105,7 @@ is the specification for `key_file` and `.enc1` files:
         - `file_size`: little-endian encoded file size in uint64
         - `init_vec`: `AES256` initialization vector
 
-    - `file encrypted`: `AES256` file encrypted compressed bytes with chunk size of `2^27`
+    - `file encrypted`: `AES256` encrypted `DEFLATE` compressed bytes with chunk size of `2^27`
 
 ```
 __________________________________________________________________________________
