@@ -5,7 +5,7 @@ if __name__ == "__main__":
         long_description = f.read()
     setuptools.setup(
         name="czlib",
-        version="2.0.1",
+        version="2.0.3",
         author="Nguyen Ngoc Khanh",
         author_email="khanh.nguyen.contact@gmail.com",
         long_description=long_description,
@@ -15,6 +15,5 @@ if __name__ == "__main__":
         license="MIT",
         install_requires=[
             "pycryptodomex==3.17",
-            "zlib==1.2.13",
         ],
     )
