@@ -7,8 +7,8 @@ import shutil
 import sys
 from typing import *
 
-from .czip import KEY_SIZE
-from .czip_file import Codec
+from .czlib import KEY_SIZE
+from .czlib_file import Codec
 
 ENCRYPTED_EXT = "7z.enc"
 

@@ -7,7 +7,7 @@ import sys
 from dataclasses import dataclass
 from typing import BinaryIO
 
-from .czip import aes256_encrypt, aes256_decrypt, sha1_hash, BLOCK_SIZE, KEY_SIZE
+from .czlib import aes256_encrypt, aes256_decrypt, sha1_hash, BLOCK_SIZE, KEY_SIZE
 from .serialize import uint64_to_bytes, bytes_to_uint64, UINT64_SIZE
 from .signature import get_file_sig, FILE_SIG_SIZE, get_key_sig, KEY_SIG_SIZE, set_file_signature
 
