@@ -1,6 +1,6 @@
-# CZIP 
+# CZLIB 
 
-- Encrypt all your files and write into another directory if there is update
+- Encrypt and Compress all your files and write into another directory if there is update
 - Clean the encrypted directory if files or directories have been deleted
 - Restore
 - Minimize writing to SSDs
