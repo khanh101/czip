@@ -91,7 +91,7 @@ is the specification for `key_file` and `.gz.enc` files:
 
 - three algorithms are used in `czlib`: `SHA1`, `AES-256`, `DEFLATE`
 
-- encrypted files are updated only if file is modified (mtime changes)
+- encrypted files are updated only if either file is modified (mtime changes) or key is changed
 
 - file is decrypt-able if `signature` matches `key`
 
@@ -120,7 +120,7 @@ is the specification for `key_file` and `.enc1` files:
 
 - two algorithms are used in `czlib`: `SHA1` and `AES-256` in `CBC` mode
 
-- encrypted files are updated only if file is modified (mtime changes)
+- encrypted files are updated only if either file is modified (mtime changes) or key is changed
 
 - file is decrypt-able if `signature` matches `key`
 
