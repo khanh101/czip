@@ -52,14 +52,13 @@ def encrypt_file_if_needed(
         with open(encrypted_path, "rb") as f:
             try:
                 header = read_header(f)
+                if key_sig == header.key_sig and file_sig == header.file_sig:
+                    # only skip if both key_sig and file_sig are the same
+                    # otherwise encrypted file will be updated regardless its mtime is sooner or later
+                    return False
             except AssertionError:
                 print(f"warning: corrupted header encrypted file {encrypted_path}", file=sys.stderr, flush=True)
 
-        if key_sig == header.key_sig and file_sig == header.file_sig:
-            # only skip if both key_sig and file_sig are the same
-            return False
-
-    # encrypted file will be updated regardless its mtime is sooner or later
     # encrypt
     init_vec = os.urandom(BLOCK_SIZE)
     file_size = os.path.getsize(plain_path)
