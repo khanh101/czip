@@ -25,10 +25,12 @@ def delete_if_ok(encrypted_path: str):
 
 def walk_file(path: str, skip_mount: bool = True, skip_link: bool = True) -> Iterator[str]:
     assert os.path.isabs(path)
+    """
     if skip_mount and os.path.ismount(path):
         return
     if skip_link and os.path.islink(path):
         return
+    """
     if os.path.isfile(path):
         yield path
     if os.path.isdir(path):
